@@ -1,39 +1,54 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import LoginView from '@/views/LoginView.vue'
-import UserView from '@/views/UserView.vue'
-import RewardView from '@/views/RewardView.vue'
-import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import LoginView from '@/views/LoginView.vue';
+import DashboardView from '@/views/DashboardView.vue';
 
 const routes = [
   {
     path: '/',
-    redirect: '/users',
-    component: DefaultLayout,
-    children: [
-      { path: '/users', name: 'Users', component: UserView },
-      { path: '/rewards', name: 'Rewards', component: RewardView },
-    ],
-    meta: { requiresAuth: true },
+    redirect: '/dashboard'
   },
   {
     path: '/login',
     name: 'Login',
     component: LoginView,
+    meta: { requiresAuth: false }
   },
-]
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: DashboardView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/users',
+    name: 'UserList',
+    component: () => import('@/views/User/UserListView.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/rewards',
+    name: 'RewardList',
+    component: () => import('@/views/Reward/RewardListView.vue'),
+    meta: { requiresAuth: true }
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
-})
+  routes
+});
 
+// Middleware Auth
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
-  if (to.meta.requiresAuth && !token) {
-    next('/login')
-  } else {
-    next()
-  }
-})
+  const token = localStorage.getItem('access_token');
 
-export default router
+  if (to.meta.requiresAuth && !token) {
+    next({ name: 'Login' });
+  } else if (to.name === 'Login' && token) {
+    next({ name: 'Dashboard' });
+  } else {
+    next();
+  }
+});
+
+export default router;
