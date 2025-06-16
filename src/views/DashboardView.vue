@@ -12,11 +12,11 @@
 </template>
 
 <script setup lang="ts">
-import DefaultLayout from '@/layout/DefaultLayout.vue';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import CardBox from '@/components/CardBox.vue';
 import { ref, onMounted } from 'vue';
-import { getUsers } from '@/services/userService';
-import { getRewards } from '@/services/rewardService';
+import { getUsers } from '@/services/userServices';
+import { getRewards } from '@/services/rewardServices';
 
 const totalUsers = ref(0);
 const totalRewards = ref(0);

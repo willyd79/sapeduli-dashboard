@@ -1,19 +1,34 @@
-import api from './axiosInstance';
-import { User } from '@/types/User';
+import api from '@/lib/api'
 
-export const getUsers = async (): Promise<User[]> => {
-  const response = await api.get('/users');
-  return response.data.data || [];
-};
+export const loginUser = async (credentials: {
+  user_email: string
+  password: string
+}) => {
+  const response = await api.post('/login', credentials)
+  return response.data
+}
 
-export const createUser = async (user: Partial<User>) => {
-  return await api.post('/users', user);
-};
+export const getUsers = async () => {
+  const response = await api.get('/users')
+  return response.data
+}
 
-export const updateUser = async (id: number, user: Partial<User>) => {
-  return await api.put(`/users/${id}`, user);
-};
+export const getUserById = async (id: number) => {
+  const response = await api.get(`/users/${id}`)
+  return response.data
+}
 
-export const deleteUserById = async (id: number) => {
-  return await api.delete(`/users/${id}`);
-};
+export const createUser = async (data: any) => {
+  const response = await api.post('/users', data)
+  return response.data
+}
+
+export const updateUser = async (id: number, data: any) => {
+  const response = await api.put(`/users/${id}`, data)
+  return response.data
+}
+
+export const deleteUser = async (id: number) => {
+  const response = await api.delete(`/users/${id}`)
+  return response.data
+}

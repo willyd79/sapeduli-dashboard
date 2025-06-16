@@ -1,56 +1,65 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-    <Card class="w-full max-w-md">
-      <template #title>Login</template>
-      <template #content>
-        <form @submit.prevent="handleLogin" class="space-y-4">
-          <div>
-            <label for="email" class="block mb-1">Email</label>
-            <InputText id="email" v-model="email" class="w-full" />
-          </div>
-          <div>
-            <label for="password" class="block mb-1">Password</label>
-            <Password v-model="password" toggleMask feedback="false" class="w-full" inputId="password" />
-          </div>
-          <div>
-            <Button type="submit" label="Login" icon="pi pi-sign-in" class="w-full" :loading="loading" />
-          </div>
-          <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
-        </form>
-      </template>
-    </Card>
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-green-300">
+    <div class="w-full max-w-md p-8 bg-white rounded-xl shadow-lg">
+      <div class="text-center mb-6">
+        <h1 class="text-4xl font-bold text-green-700 mb-2">Sapeduli</h1>
+        <p class="text-gray-500">Silakan login untuk masuk ke dashboard</p>
+      </div>
+      <form @submit.prevent="handleLogin">
+        <div class="mb-4">
+          <label for="email" class="block text-gray-700 font-semibold mb-1">Email</label>
+          <InputText
+            id="email"
+            v-model="email"
+            placeholder="Masukkan email anda"
+            class="w-full"
+          />
+        </div>
+        <div class="mb-6">
+          <label for="password" class="block text-gray-700 font-semibold mb-1">Password</label>
+          <Password
+            id="password"
+            v-model="password"
+            toggleMask
+            feedback="false"
+            placeholder="Masukkan password"
+            class="w-full"
+          />
+        </div>
+        <Button type="submit" label="Login" class="w-full" />
+      </form>
+      <Message v-if="error" severity="error" class="mt-4">{{ error }}</Message>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { login } from '@/services/authService.ts';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { loginUser } from '@/services/userServices'
 
-const email = ref('');
-const password = ref('');
-const loading = ref(false);
-const errorMessage = ref('');
-const router = useRouter();
+const email = ref('')
+const password = ref('')
+const error = ref('')
+const router = useRouter()
 
 const handleLogin = async () => {
-  loading.value = true;
-  errorMessage.value = '';
-
   try {
-    const res = await login({ email: email.value, password: password.value });
+    const response = await loginUser({ user_email: email.value, password: password.value })
 
-    if (res.status && res.token?.plainTextToken) {
-      localStorage.setItem('access_token', res.token.plainTextToken);
-      localStorage.setItem('user', JSON.stringify(res.user));
-      router.push('/dashboard');
+    if (response?.token?.plainTextToken) {
+      localStorage.setItem('token', response.token.plainTextToken)
+      localStorage.setItem('user', JSON.stringify(response.user))
+      router.push('/dashboard')
     } else {
-      errorMessage.value = res.message || 'Login gagal.';
+      error.value = 'Login gagal, data token tidak ditemukan.'
     }
   } catch (err: any) {
-    errorMessage.value = err.response?.data?.message || 'Terjadi kesalahan saat login.';
-  } finally {
-    loading.value = false;
+    error.value = err?.response?.data?.message || 'Gagal login. Silakan periksa kembali.'
   }
-};
+}
 </script>
+
+<style scoped>
+/* Opsional tambahan styling jika butuh */
+</style>
