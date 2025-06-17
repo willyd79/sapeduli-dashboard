@@ -1,12 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
-import DashboardView from '@/views/DashboardView.vue';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
 
 const routes = [
-  {
-    path: '/',
-    redirect: '/dashboard'
-  },
   {
     path: '/login',
     name: 'Login',
@@ -14,23 +10,31 @@ const routes = [
     meta: { requiresAuth: false }
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: DashboardView,
-    meta: { requiresAuth: true }
+    path: '/',
+    component: DefaultLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/DashboardView.vue')
+      },
+      {
+        path: 'users',
+        name: 'UserList',
+        component: () => import('@/views/User/UserListView.vue')
+      },
+      {
+        path: 'rewards',
+        name: 'RewardList',
+        component: () => import('@/views/Reward/RewardListView.vue')
+      }
+    ]
   },
   {
-    path: '/users',
-    name: 'UserList',
-    component: () => import('@/views/User/UserListView.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/rewards',
-    name: 'RewardList',
-    component: () => import('@/views/Reward/RewardListView.vue'),
-    meta: { requiresAuth: true }
-  },
+    path: '/:pathMatch(.*)*',
+    redirect: '/dashboard'
+  }
 ];
 
 const router = createRouter({
@@ -38,7 +42,6 @@ const router = createRouter({
   routes
 });
 
-// Middleware Auth
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('access_token');
 
@@ -51,4 +54,4 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-export default router;
+export default router; // ⬅️ PENTING

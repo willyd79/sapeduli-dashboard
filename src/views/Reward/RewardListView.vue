@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { getAllRewards } from '@/services/rewardService'
+import { getRewards } from '@/services/rewardServices'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
@@ -23,7 +23,7 @@ import Card from 'primevue/card'
 const rewards = ref([])
 
 onMounted(async () => {
-  const res = await getAllRewards()
+  const res = await getRewards()
   if (res.status) {
     rewards.value = res.data
   }

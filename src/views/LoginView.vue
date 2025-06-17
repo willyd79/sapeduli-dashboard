@@ -45,10 +45,10 @@ const router = useRouter()
 
 const handleLogin = async () => {
   try {
-    const response = await loginUser({ user_email: email.value, password: password.value })
+    const response = await loginUser({ user_email: email.value, user_password: password.value })
 
     if (response?.token?.plainTextToken) {
-      localStorage.setItem('token', response.token.plainTextToken)
+      localStorage.setItem('access_token', response.token.plainTextToken)
       localStorage.setItem('user', JSON.stringify(response.user))
       router.push('/dashboard')
     } else {
