@@ -1,13 +1,7 @@
-// src/services/rewardServices.ts
-import api from '@/lib/api' // bukan './axiosInstance'
+import api from '@/lib/api'
 
 export const getRewards = async () => {
   const response = await api.get('/rewards')
-  return response.data
-}
-
-export const getRewardById = async (id: number) => {
-  const response = await api.get(`/rewards/${id}`)
   return response.data
 }
 
@@ -21,7 +15,7 @@ export const updateReward = async (id: number, data: any) => {
   return response.data
 }
 
-export const deleteReward = async (id: number) => {
+export const deleteRewardById = async (id: number) => {
   const response = await api.delete(`/rewards/${id}`)
   return response.data
 }
